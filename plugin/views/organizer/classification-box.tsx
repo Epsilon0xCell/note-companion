@@ -112,7 +112,7 @@ export const ClassificationBox: React.FC<ClassificationBoxProps> = ({
         templateName
       );
 
-      await plugin.formatContentInSplitView({
+      await plugin.streamFormatInSplitView({
         file: file,
         content: fileContent,
         formattingInstruction: formattingInstruction,
@@ -221,7 +221,6 @@ export const ClassificationBox: React.FC<ClassificationBoxProps> = ({
 
   return (
     <div className="">
-      <div className="font-semibold pb-2">User Templates</div>
       {renderContent()}
     </div>
   );

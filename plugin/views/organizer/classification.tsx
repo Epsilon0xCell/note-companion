@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TFile, Notice } from "obsidian";
 import FileOrganizer from "../../index";
-import { ClassificationBox } from "./classification-box";
+import { ClassificationBox } from "./ai-format/user-templates";
 import { FabricClassificationBox } from "./fabric-classification-box";
 import { DEFAULT_SETTINGS } from "../../settings";
 
@@ -18,9 +18,9 @@ export const ClassificationContainer: React.FC<ClassificationBoxProps> = ({
   content,
   refreshKey,
 }) => {
-  const [formatBehavior, setFormatBehavior] = React.useState<"override" | "newFile">(
-    plugin.settings.formatBehavior || DEFAULT_SETTINGS.formatBehavior
-  );
+  const [formatBehavior, setFormatBehavior] = React.useState<
+    "override" | "newFile"
+  >(plugin.settings.formatBehavior || DEFAULT_SETTINGS.formatBehavior);
   const [backupFile, setBackupFile] = React.useState<string | null>(null);
 
   const handleFormat = async (templateName: string) => {
@@ -37,7 +37,7 @@ export const ClassificationContainer: React.FC<ClassificationBoxProps> = ({
         templateName
       );
 
-      await plugin.formatContentInSplitView({
+      await plugin.streamFormatInSplitView({
         file: file,
         content: fileContent,
         formattingInstruction: formattingInstruction,
@@ -53,7 +53,9 @@ export const ClassificationContainer: React.FC<ClassificationBoxProps> = ({
     if (!file || !backupFile) return;
 
     try {
-      const backupTFile = plugin.app.vault.getAbstractFileByPath(backupFile) as TFile;
+      const backupTFile = plugin.app.vault.getAbstractFileByPath(
+        backupFile
+      ) as TFile;
       if (!backupTFile) {
         throw new Error("Backup file not found");
       }
@@ -81,7 +83,9 @@ export const ClassificationContainer: React.FC<ClassificationBoxProps> = ({
     }
   }, [content, extractBackupFile]);
 
-  const handleFormatBehaviorChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFormatBehaviorChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const newBehavior = event.target.value as "override" | "newFile";
     setFormatBehavior(newBehavior);
     plugin.settings.formatBehavior = newBehavior;
@@ -89,46 +93,50 @@ export const ClassificationContainer: React.FC<ClassificationBoxProps> = ({
   };
 
   return (
-    <div className="bg-[--background-primary-alt] text-[--text-normal] p-4 rounded-lg space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="font-semibold">Classification</div>
-        {backupFile && (
-          <button
-            onClick={handleRevert}
-            className="px-3 py-1 text-sm rounded-md bg-[--background-modifier-error] text-[--text-on-accent] hover:opacity-90 transition-opacity"
+    <div>
+      <div className="font-semibold">AI Templates</div>
+      <div className="bg-[--background-primary-alt] text-[--text-normal] p-4 rounded-lg space-y-4 shadow-lg">
+        <div className="flex justify-between items-center">
+          {backupFile && (
+            <button
+              onClick={handleRevert}
+              className="px-3 py-1 text-sm rounded-md bg-[--background-modifier-error] text-[--text-on-accent] hover:opacity-90 transition-opacity"
+            >
+              Revert
+            </button>
+          )}
+        </div>
+        <div className="flex items-center space-x-2">
+          <label htmlFor="formatBehavior" className="font-medium">
+            Format Behavior:
+          </label>
+          <select
+            id="formatBehavior"
+            value={formatBehavior}
+            onChange={handleFormatBehaviorChange}
+            className="px-2 py-1 rounded-md border border-[--background-modifier-border]"
           >
-            Revert
-          </button>
-        )}
-      </div>
-      <div className="flex items-center space-x-2">
-        <label htmlFor="formatBehavior" className="font-medium">Format Behavior:</label>
-        <select
-          id="formatBehavior"
-          value={formatBehavior}
-          onChange={handleFormatBehaviorChange}
-          className="px-2 py-1 rounded-md border border-[--background-modifier-border]"
-        >
-          <option value="override">Override</option>
-          <option value="newFile">New File</option>
-        </select>
-      </div>
-      <ClassificationBox
-        plugin={plugin}
-        file={file}
-        content={content}
-        refreshKey={refreshKey}
-        onFormat={handleFormat}
-      />
-      {plugin.settings.enableFabric && (
-        <FabricClassificationBox
+            <option value="override">Override</option>
+            <option value="newFile">New File</option>
+          </select>
+        </div>
+        <ClassificationBox
           plugin={plugin}
           file={file}
           content={content}
           refreshKey={refreshKey}
           onFormat={handleFormat}
         />
-      )}
+        {plugin.settings.enableFabric && (
+          <FabricClassificationBox
+            plugin={plugin}
+            file={file}
+            content={content}
+            refreshKey={refreshKey}
+            onFormat={handleFormat}
+          />
+        )}
+      </div>
     </div>
   );
 };
