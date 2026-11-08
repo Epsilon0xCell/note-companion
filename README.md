@@ -1,3 +1,7 @@
+![note-companion banner: a tall honey oak card catalogue in a warm library, loose paper notes scattered on the table at the left and open drawers of neat cream index cards at the right, brass label frames throughout](banner.png)
+
+<p align="center"><img src="logo.png" alt="note-companion logo: one open oak catalogue drawer seen from the front, rows of cream index cards inside and a single blank card lifted halfway out toward the light, a brass label frame on the drawer front" width="200"></p>
+
 # Note Companion AI (prev. File Organizer 2000)
 
 Note Companion is an AI-powered Obsidian plugin that automatically organizes and formats your notes—so you don’t have to.
